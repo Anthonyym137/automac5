@@ -1,0 +1,64 @@
+# Python bytecode 
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+bin/
+include/
+share/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.node-atoms
+
+# IDE settings 
+.vscode/
+.idea/
+.spyderproject
+.project
+.spyproject
+.settings/
+
+# --- Operating systems ---
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Temporary Files ---
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Linux / Swap files
+*.save
+*~
+*.swp
+*.swo
+.history
+.bash_history
