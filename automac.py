@@ -4,14 +4,16 @@ import time
 import socket
 import random
 import psutil
+import platform
+import subprocess
 
 
 def clear_terminal():
 	"""Clears the terminal screen."""
-	os.system('clear')
+	subprocess.run(['clear'])
 
 
-def root():
+def is_root():
 	"""Performs a root permission check."""
 	if os.geteuid() != 0:
 		os.execvp('sudo', ['sudo', 'python3'] + sys.argv)
@@ -22,6 +24,7 @@ def get_interfaces():
 	interfaces = psutil.net_if_addrs()
 	if 'lo' in interfaces.keys():
 		del interfaces['lo']
+
 	for itf in interfaces.keys():
 		for addr in interfaces[itf]:
 			if addr.family == psutil.AF_LINK:
@@ -58,22 +61,25 @@ def check_connection():
 def main():
 	"""Main Program."""
 	clear_terminal()
-	root()
+	is_root()
 	try:
 		while True:
 			interfaces = get_interfaces()
 			macaddress = random_mac()
 			for itf in interfaces.keys():
-				os.system('nmcli device set '+itf+' managed no')
-				os.system('dhclient -r '+itf)
+				subprocess.run(['nmcli', 'device', 'set', itf, 'managed', 'no'])
+				subprocess.run(['dhclient', '-r', itf])
 				time.sleep(1)
-				os.system('ip link set '+itf+' down')
+
+				subprocess.run(['ip', 'link', 'set', itf, 'down'])
 				time.sleep(2)
-				os.system('ifconfig '+itf+' hw ether '+macaddress)
-				os.system('ip link set '+itf+' up')
+
+				subprocess.run(['ifconfig', itf, 'hw', 'ether', macaddress])
+				subprocess.run(['ip', 'link', 'set', itf, 'up'])
 				time.sleep(2)
-				os.system('nmcli device set '+itf+' managed yes')
-				print('\n'+interfaces[itf]+'  -->  '+macaddress+f'   interface: ({itf})')
+
+				subprocess.run(['nmcli', 'device', 'set', itf, 'managed', 'yes'])
+				print('\n'+interfaces[itf]+'  -->  '+macaddress+f'\tinterface: ({itf})')
 
 			while not check_connection():
 				print('\r\033[93mConnection Waiting...\033[0m', end="", flush=True)
@@ -89,9 +95,9 @@ def main():
 	except KeyboardInterrupt:
 		print('\033[91mShutdowning...\033[0m')
 		for itf in interfaces.keys():
-			os.system('ip link set '+itf+' up')
+			subprocess.run(['ip', 'link', 'set', itf, 'up'])
 			time.sleep(2)
-			os.system('nmcli device set '+itf+' managed yes')
+			subprocess.run(['nmcli', 'device', 'set', itf, 'managed', 'yes'])
 
 		print('\033[91mThe Program has been shutdown\033[0m')
 		sys.exit(0)
